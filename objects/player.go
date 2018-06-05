@@ -2,24 +2,10 @@ package objects
 
 import (
 	"github.com/hajimehoshi/ebiten"
-	"math"
 )
 
 type Player struct {
 	Npc
-}
-
-func applyVelocity(toBe, current, max float64) float64 {
-	if math.Abs(toBe + current) < max {
-		current += toBe
-	} else {
-		if toBe < 0 {
-			current = -max
-		} else {
-			current = max
-		}
-	}
-	return current
 }
 
 func (p *Player) Move(layer *ebiten.Image){
@@ -37,10 +23,12 @@ func (p *Player) Move(layer *ebiten.Image){
 		toBeVelocity.x = p.Speed
 	}
 
-	p.Velocity.x = applyVelocity(toBeVelocity.x, p.Velocity.x, p.MaxVelocity)
-	p.Velocity.y = applyVelocity(toBeVelocity.y, p.Velocity.y, p.MaxVelocity)
+	p.Velocity.x = p.ApplyVelocity(toBeVelocity.x, p.Velocity.x)
+	p.Velocity.y = p.ApplyVelocity(toBeVelocity.y, p.Velocity.y)
 
 	p.ApplyResistance()
+	p.Opts.GeoM.Translate(p.Velocity.x, p.Velocity.y)
+
 }
 
 func NewPlayer(sprite *ebiten.Image, err error) *Player {
