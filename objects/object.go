@@ -3,6 +3,7 @@ package objects
 import (
 	"github.com/hajimehoshi/ebiten"
 	"image/color"
+	"math"
 )
 
 type Object struct {
@@ -11,6 +12,8 @@ type Object struct {
 	Colour                                  color.NRGBA
 	Opts                                    *ebiten.DrawImageOptions
 	Size 									Vector2D
+	Velocity                                Vector2D
+	MaxVelocity								float64
 }
 
 
@@ -32,6 +35,23 @@ func (o *Object) AppendPosition(d Vector2D) {
 
 func (o *Object) GetSprite() *ebiten.Image {
 	return o.Sprite
+}
+
+func (n *Object) GetVelocity() Vector2D {
+	return n.Velocity
+}
+
+func (n *Object) ApplyVelocity(toBe, current float64) float64 {
+	if math.Abs(toBe + current) < n.MaxVelocity {
+		current += toBe
+	} else {
+		if toBe < 0 {
+			current = -n.MaxVelocity
+		} else {
+			current = n.MaxVelocity
+		}
+	}
+	return current
 }
 
 func (o *Object) Display(layer *ebiten.Image) {
