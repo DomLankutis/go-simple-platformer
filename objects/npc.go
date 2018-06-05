@@ -7,8 +7,7 @@ import (
 
 type Npc struct {
 	Object
-	Velocity                                Vector2D
-	Speed, MaxVelocity, Gravity, Resistance float64
+	Speed, Gravity, Resistance float64
 }
 
 func (n *Npc) init() {
@@ -23,17 +22,6 @@ func (n *Npc) init() {
 	n.Size = Vector2D{float64(w), float64(h)}
 	n.CollisionBox = newAABB(Vector2D{0,0}, n.Size.div(Vector2D{2, 2}))
 }
-
-func (n *Npc) Display(layer *ebiten.Image) {
-	n.Opts.GeoM.Translate(n.Velocity.x, n.Velocity.y)
-	n.Object.Display(layer)
-
-}
-
-func (n *Npc) GetVelocity() Vector2D {
-	return n.Velocity
-}
-
 
 func (n *Npc) ApplyResistance() {
 	if n.Velocity.x < 0 {
