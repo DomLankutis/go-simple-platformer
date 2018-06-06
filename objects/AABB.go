@@ -121,10 +121,16 @@ func (a *AABB) getRayIntersectionFraction(origin, direction Vector2D) float64 {
 	return minT
 }
 
-func (o *Object) Collide(obj Object){
+func (o *Object) IsOverlapping(obj Object) (bool, *AABB){
 	diff := obj.CollisionBox.minkowskiDifference(o.CollisionBox)
-	if diff.GetMin().x <= 0 && diff.GetMax().x >= 0 &&
-		diff.GetMin().y <= 0 && diff.GetMax().y >= 0 {
+	return diff.GetMin().x <= 0 && diff.GetMax().x >= 0 && diff.GetMin().y <= 0 && diff.GetMax().y >= 0, diff
+}
+
+func (o *Object) Collide(obj Object) {
+
+	overlapping, diff := o.IsOverlaping(obj)
+
+	if overlapping {
 
 		penetrationVector := diff.closestPointOnBoundsToPoint(Vector2D{0, 0})
 
