@@ -7,12 +7,13 @@ import (
 
 type Npc struct {
 	Object
-	Speed, Gravity, Resistance float64
+	Speed, Gravity, Resistance, JumpForce float64
 }
 
 func (n *Npc) init() {
 	n.Speed = 0.3
-	n.Gravity = 0.1
+	n.Gravity = 1
+	n.JumpForce = n.Gravity * 10
 	n.Resistance = 0.1
 	n.MaxVelocity = 5
 	n.Colour = color.NRGBA{0x00, 0xfa, 0x9f, 0xff}
@@ -37,19 +38,16 @@ func (n *Npc) ApplyResistance() {
 			n.Velocity.x -= n.Resistance
 		}
 	}
-	if n.Velocity.y < 0 {
-		if n.Velocity.y > -n.Speed {
-			n.Velocity.y = 0
-		} else {
-			n.Velocity.y += n.Gravity
-		}
-	} else {
-		if n.Velocity.y < n.Speed {
-			n.Velocity.y = 0
-		} else {
-			n.Velocity.y -= n.Gravity
-		}
-	}
+	//if n.Velocity.y > 0 {
+	//	if n.Velocity.y > -n.Speed {
+	//		n.Velocity.y = 0
+	//	}
+	//} else {
+	//	if n.Velocity.y < n.Speed {
+	//		n.Velocity.y = 0
+	//	}
+	//}
+	n.Velocity.y += n.Gravity
 }
 
 
