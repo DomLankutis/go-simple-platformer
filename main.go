@@ -9,7 +9,7 @@ import (
 )
 
 var player objects.Player
-var col, col1 objects.Object
+var col, col1, col2 objects.Object
 
 func update(screen *ebiten.Image) error {
 	screen.Fill(color.NRGBA{0xa0, 0x01, 0xfa, 0xff})
@@ -17,9 +17,11 @@ func update(screen *ebiten.Image) error {
 	player.Move(screen)
 	player.Collide(col)
 	player.Collide(col1)
+	player.Collide(col2)
 
 	col.Display(screen)
 	col1.Display(screen)
+	col2.Display(screen)
 	player.Display(screen)
 
 
@@ -31,9 +33,10 @@ func update(screen *ebiten.Image) error {
 }
 
 func main() {
-	objImage, _ := ebiten.NewImage(90, 80, ebiten.FilterNearest)
-	col = *objects.NewObject(color.NRGBA{0xf0, 0xff,0xaf, 0xff}, 640 / 2, 360 / 2, objImage)
-	col1 = *objects.NewObject(color.NRGBA{0xf0, 0xff, 0xaf, 0xff}, 640 / 2 +90, 360 / 2 + 50, objImage)
+	objImage, _ := ebiten.NewImage(640, 80, ebiten.FilterNearest)
+	col = *objects.NewObject(color.NRGBA{0xf0, 0xff,0xaf, 0xff}, 0, 280, objImage)
+	col1 = *objects.NewObject(color.NRGBA{0xf0, 0xff, 0xaf, 0xff}, 640 / 2 +90, 360 / 2, objImage)
+	col2 = *objects.NewObject(color.NRGBA{0xf0, 0xff, 0xaf, 0xff}, -300, 360 / 2 - 80, objImage)
 	player = *objects.NewPlayer(ebiten.NewImage(50, 50, ebiten.FilterNearest))
 	if err := ebiten.Run(update, 640, 360, 3, "Game"); err != nil {
 		fmt.Println(err)
