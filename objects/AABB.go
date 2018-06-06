@@ -128,7 +128,7 @@ func (o *Object) IsOverlapping(obj Object) (bool, *AABB){
 
 func (o *Object) Collide(obj Object) {
 
-	overlapping, diff := o.IsOverlaping(obj)
+	overlapping, diff := o.IsOverlapping(obj)
 
 	if overlapping {
 
