@@ -13,6 +13,7 @@ type Object struct {
 	Opts                                    *ebiten.DrawImageOptions
 	Size 									Vector2D
 	Velocity                                Vector2D
+	CanJump 								bool
 	MaxVelocity								float64
 }
 
@@ -41,14 +42,14 @@ func (n *Object) GetVelocity() Vector2D {
 	return n.Velocity
 }
 
-func (n *Object) ApplyVelocity(toBe, current float64) float64 {
-	if math.Abs(toBe + current) < n.MaxVelocity {
+func (n *Object) ApplyVelocity(toBe, current, limit float64) float64 {
+	if math.Abs(toBe + current) < limit {
 		current += toBe
 	} else {
 		if toBe < 0 {
-			current = -n.MaxVelocity
+			current = -limit
 		} else {
-			current = n.MaxVelocity
+			current = limit
 		}
 	}
 	return current
