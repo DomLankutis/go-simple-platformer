@@ -144,6 +144,7 @@ func (o *Object) Collide(obj Object) {
 
 			o.Velocity = Vector2D{oDotProduct, oDotProduct}.mul(tangent)
 			obj.Velocity = Vector2D{objDotProduct, objDotProduct}.mul(tangent)
+			o.CanJump = true
 		}
 	}else {
 		relativeMotion := o.Velocity.sub(obj.Velocity)
@@ -162,7 +163,7 @@ func (o *Object) Collide(obj Object) {
 
 			o.SetPosition(Vector2D{oDotProduct, oDotProduct}.mul(tangent))
 			obj.SetPosition(Vector2D{objDotProduct, objDotProduct}.mul(tangent))
-
+			o.CanJump = true
 		}
 	}
 
