@@ -7,7 +7,7 @@ import (
 
 type Npc struct {
 	Object
-	Speed, Gravity, Resistance, JumpForce float64
+	Speed, Gravity, Resistance, JumpForce 	float64
 }
 
 func (n *Npc) init() {
@@ -25,29 +25,20 @@ func (n *Npc) init() {
 }
 
 func (n *Npc) ApplyResistance() {
-	if n.Velocity.x < 0 {
-		if n.Velocity.x > -n.Speed {
-			n.Velocity.x = 0
+	if n.Velocity.X < 0 {
+		if n.Velocity.X > -n.Speed {
+			n.Velocity.X = 0
 		} else {
-			n.Velocity.x += n.Resistance
+			n.Velocity.X += n.Resistance
 		}
 	} else {
-		if n.Velocity.x < n.Speed {
-			n.Velocity.x = 0
+		if n.Velocity.X < n.Speed {
+			n.Velocity.X = 0
 		} else {
-			n.Velocity.x -= n.Resistance
+			n.Velocity.X -= n.Resistance
 		}
 	}
-	//if n.Velocity.y > 0 {
-	//	if n.Velocity.y > -n.Speed {
-	//		n.Velocity.y = 0
-	//	}
-	//} else {
-	//	if n.Velocity.y < n.Speed {
-	//		n.Velocity.y = 0
-	//	}
-	//}
-	n.Velocity.y += n.Gravity
+	n.Velocity.Y += n.Gravity
 }
 
 

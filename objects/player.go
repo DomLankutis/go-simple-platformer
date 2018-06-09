@@ -8,24 +8,24 @@ type Player struct {
 	Npc
 }
 
-func (p *Player) Move(layer *ebiten.Image){
+func (p *Player) Move(){
 	//toBeVelocity := Vector2D{0,0};
 	if ebiten.IsKeyPressed(ebiten.KeyW) && p.CanJump{
-		p.Velocity.y = p.ApplyVelocity(-p.JumpForce, p.Velocity.y, p.JumpForce)
+		p.Velocity.Y = p.ApplyVelocity(-p.JumpForce, p.Velocity.Y, p.JumpForce)
 		p.CanJump = false
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyS) {
-		p.Velocity.y = p.ApplyVelocity(p.Speed, p.Velocity.y, p.MaxVelocity)
+		p.Velocity.Y = p.ApplyVelocity(p.Speed, p.Velocity.Y, p.MaxVelocity)
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyA) {
-		p.Velocity.x = p.ApplyVelocity(-p.Speed, p.Velocity.x, p.MaxVelocity)
+		p.Velocity.X = p.ApplyVelocity(-p.Speed, p.Velocity.X, p.MaxVelocity)
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyD) {
-		p.Velocity.x = p.ApplyVelocity(p.Speed, p.Velocity.x, p.MaxVelocity)
+		p.Velocity.X = p.ApplyVelocity(p.Speed, p.Velocity.X, p.MaxVelocity)
 	}
 
 	p.ApplyResistance()
-	p.Opts.GeoM.Translate(p.Velocity.x, p.Velocity.y)
+	p.Opts.GeoM.Translate(p.Velocity.X, p.Velocity.Y)
 
 }
 
