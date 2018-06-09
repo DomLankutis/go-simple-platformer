@@ -9,21 +9,24 @@ import (
 )
 
 var player objects.Player
-var col, col1, col2 objects.Object
+var collidables *objects.ObjectManager
+var collectables *objects.ObjectManager
 
 func update(screen *ebiten.Image) error {
+
 	screen.Fill(color.NRGBA{0xa0, 0x01, 0xfa, 0xff})
 
-	player.Move(screen)
-	player.Collide(col)
-	player.Collide(col1)
-	player.Collide(col2)
+	player.Move()
+	collidables.Collide(&player.Object)
+	collidables.Display(screen)
 
-	col.Display(screen)
-	col1.Display(screen)
-	col2.Display(screen)
+	if collectables.Collide(&player.Object) {
+		player.SetPosition(objects.Vector2D{50,50})
+	}
+	collectables.Display(screen)
+	collectables.Collide(&player.Object)
+
 	player.Display(screen)
-
 
 	ebitenutil.DebugPrint(screen, fmt.Sprintf("Position: %0.f", player.GetPosition()))
 	ebitenutil.DebugPrint(screen, fmt.Sprintf("\nVelocity: %.0f", player.Velocity))
@@ -33,10 +36,16 @@ func update(screen *ebiten.Image) error {
 }
 
 func main() {
+	collidables = objects.NewObjectManager()
+	collectables = objects.NewObjectManager()
+
+
 	objImage, _ := ebiten.NewImage(640, 80, ebiten.FilterNearest)
-	col = *objects.NewObject(color.NRGBA{0xf0, 0xff,0xaf, 0xff}, 0, 280, objImage)
-	col1 = *objects.NewObject(color.NRGBA{0xf0, 0xff, 0xaf, 0xff}, 640 / 2 +90, 360 / 2, objImage)
-	col2 = *objects.NewObject(color.NRGBA{0xf0, 0xff, 0xaf, 0xff}, -300, 360 / 2 - 80, objImage)
+	objImage1, _ := ebiten.NewImage(10, 10, ebiten.FilterNearest)
+	collidables.AddObject(objects.NewObject(color.NRGBA{0xf0, 0xff,0xaf, 0xff}, -200, 80, objImage))
+	collidables.AddObject(objects.NewObject(color.NRGBA{0xf0, 0xff, 0xaf, 0xff}, 640 / 2 +90, 260, objImage))
+	collidables.AddObject(objects.NewObject(color.NRGBA{0xf0, 0xff, 0xaf, 0xff}, 0, 320, objImage))
+	collectables.AddObject(objects.NewObject(color.NRGBA{0xf0, 0xff, 0xaf, 0xff}, 50, 280, objImage1))
 	player = *objects.NewPlayer(ebiten.NewImage(50, 50, ebiten.FilterNearest))
 	if err := ebiten.Run(update, 640, 360, 3, "Game"); err != nil {
 		fmt.Println(err)
