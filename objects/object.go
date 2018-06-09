@@ -17,7 +17,6 @@ type Object struct {
 	MaxVelocity								float64
 }
 
-
 func (o *Object) GetPosition() Vector2D {
 	x := o.Opts.GeoM.Element(0, 2)
 	y := o.Opts.GeoM.Element(1, 2)
@@ -25,13 +24,15 @@ func (o *Object) GetPosition() Vector2D {
 }
 
 func (o *Object) SetPosition(d Vector2D) {
-	o.Opts.GeoM.Translate(d.x, d.y)
+	currentPos := o.GetPosition()
+	d1 := d.sub(currentPos)
+	o.Opts.GeoM.Translate(d1.X, d1.Y)
 }
 
 func (o *Object) AppendPosition(d Vector2D) {
 	newPos := o.GetPosition()
 	newPos.add(d)
-	o.Opts.GeoM.Translate(newPos.x, newPos.y)
+	o.Opts.GeoM.Translate(newPos.X, newPos.Y)
 }
 
 func (o *Object) GetSprite() *ebiten.Image {
@@ -40,6 +41,10 @@ func (o *Object) GetSprite() *ebiten.Image {
 
 func (n *Object) GetVelocity() Vector2D {
 	return n.Velocity
+}
+
+func (o *Object) ApplyDirectVelocity(d Vector2D) {
+	o.Opts.GeoM.Translate(d.X, d.Y)
 }
 
 func (n *Object) ApplyVelocity(toBe, current, limit float64) float64 {
