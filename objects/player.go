@@ -9,7 +9,7 @@ type Player struct {
 }
 
 func (p *Player) Move(){
-	//toBeVelocity := Vector2D{0,0};
+	//toBeVelocity := Vector2D{0,0};d
 	if ebiten.IsKeyPressed(ebiten.KeyW) && p.CanJump{
 		p.Velocity.Y = p.ApplyVelocity(-p.JumpForce, p.Velocity.Y, p.JumpForce)
 		p.CanJump = false
@@ -26,13 +26,31 @@ func (p *Player) Move(){
 
 	p.ApplyResistance()
 	p.Opts.GeoM.Translate(p.Velocity.X, p.Velocity.Y)
-
 }
 
-func NewPlayer(sprite *ebiten.Image, err error) *Player {
+func (p *Player) Display(layer *ebiten.Image) {
+	pos := p.GetPosition()
+
+	if pos.X > (p.world.ViewportPosition.X + (p.world.ViewportSize.X * 0.65)) {
+		p.world.ViewportPosition.X += pos.X - (p.world.ViewportPosition.X + (p.world.ViewportSize.X * 0.65))
+	} else
+	if pos.X < (p.world.ViewportPosition.X + (p.world.ViewportSize.X * 0.3)) {
+		p.world.ViewportPosition.X -= (p.world.ViewportPosition.X + (p.world.ViewportSize.X * 0.3)) - pos.X
+	}
+	if pos.Y > (p.world.ViewportPosition.Y + (p.world.ViewportSize.Y * 0.5)) {
+		p.world.ViewportPosition.Y += pos.Y - (p.world.ViewportPosition.Y + (p.world.ViewportSize.Y * 0.5))
+	} else
+	if pos.Y < (p.world.ViewportPosition.Y + (p.world.ViewportSize.Y * 0.2)) {
+		p.world.ViewportPosition.Y -= (p.world.ViewportPosition.Y + (p.world.ViewportSize.Y * 0.2)) - pos.Y
+	}
+
+	p.Object.Display(layer)
+}
+
+func NewPlayer(sprite *ebiten.Image, _ error, world *World) *Player {
 	p := &Player{}
 	p.Sprite = sprite
 	p.init()
+	p.world = world
 	return p
 }
-
