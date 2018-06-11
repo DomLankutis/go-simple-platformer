@@ -17,14 +17,14 @@ func update(screen *ebiten.Image) error {
 	screen.Fill(color.NRGBA{0xa0, 0x01, 0xfa, 0xff})
 
 	player.Move()
-	collidables.Collide(&player.Object)
+	collidables.Collide(player.GetObject())
 	collidables.Display(screen)
 
-	if collectables.Collide(&player.Object) {
+	if collectables.Collide(player.GetObject()) {
 		player.SetPosition(objects.Vector2D{50,50})
 	}
 	collectables.Display(screen)
-	collectables.Collide(&player.Object)
+	collectables.Collide(player.GetObject())
 
 	player.Display(screen)
 
