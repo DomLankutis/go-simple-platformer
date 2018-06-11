@@ -35,3 +35,4 @@ func NewPlayer(sprite *ebiten.Image, err error) *Player {
 	p.init()
 	return p
 }
+
