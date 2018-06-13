@@ -65,9 +65,9 @@ func (n *Object) ApplyVelocity(toBe, current, limit float64) float64 {
 func (o *Object) Display(layer *ebiten.Image) {
 	o.CollisionBox.center = o.GetPosition().add(o.Size.div(Vector2D{2, 2}))
 	o.Sprite.Fill(o.Colour)
-	o.Opts.GeoM.Translate(-o.world.ViewportPosition.X, -o.world.ViewportPosition.Y)
-	layer.DrawImage(o.Sprite, o.Opts)
-	o.Opts.GeoM.Translate(o.world.ViewportPosition.X, o.world.ViewportPosition.Y)
+	cameraOpts := *o.Opts
+	cameraOpts.GeoM.Translate(-o.world.ViewportPosition.X, -o.world.ViewportPosition.Y)
+	layer.DrawImage(o.Sprite, &cameraOpts)
 }
 
 func NewObject(colour color.NRGBA, posx, posy float64, sprite *ebiten.Image, world *World) *Object{
