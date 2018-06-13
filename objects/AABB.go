@@ -55,20 +55,21 @@ func (a *AABB) minkowskiDifference(obj *AABB) *AABB {
 func (a *AABB) closestPointOnBoundsToPoint(point Vector2D) Vector2D{
 	max := a.GetMax()
 	min := a.GetMin()
+
 	minDist := math.Abs(point.X - min.X)
 	boundsPoint := Vector2D{min.X, point.Y}
 
-	if math.Abs(max.X- point.X) < minDist {
+	if math.Abs(max.X - point.X) < minDist {
 		minDist = math.Abs(max.X - point.X)
 		boundsPoint = Vector2D{max.X, point.Y}
 	}
 
-	if math.Abs(max.Y- point.Y) < minDist {
+	if math.Abs(max.Y - point.Y) < minDist {
 		minDist = math.Abs(max.Y - point.Y)
 		boundsPoint = Vector2D{point.X, max.Y}
 	}
 
-	if math.Abs(min.Y- point.Y) < minDist {
+	if math.Abs(min.Y - point.Y) < minDist {
 		minDist = math.Abs(min.Y - point.Y)
 		boundsPoint = Vector2D{point.X, min.Y}
 	}
@@ -114,7 +115,7 @@ func (a *AABB) getRayIntersectionFraction(origin, direction Vector2D) float64 {
 		minT = x
 	}
 	x = a.getRayIntersectionFractionOfFirstRay(origin, end, Vector2D{max.X, max.Y}, Vector2D{max.X, min.Y})
-	if (x < minT) {
+	if x < minT {
 		minT = x
 	}
 
@@ -131,7 +132,6 @@ func (o *Object) Collide(obj Object) bool {
 	overlapping, diff := o.IsOverlapping(obj)
 
 	if overlapping {
-
 		penetrationVector := diff.closestPointOnBoundsToPoint(Vector2D{0, 0})
 
 		o.ApplyDirectVelocity(penetrationVector)
@@ -152,9 +152,7 @@ func (o *Object) Collide(obj Object) bool {
 		}
 	}else {
 		relativeMotion := o.Velocity.sub(obj.Velocity)
-		//h := diff.getRayIntersectionFraction(Vector2D{0, 0}, relativeMotion)
-
-		h := math.Inf(1)
+		h := diff.getRayIntersectionFraction(Vector2D{0, 0}, relativeMotion)
 
 		if h < math.Inf(1) {
 
