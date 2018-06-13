@@ -34,8 +34,8 @@ func (manager *ObjectManager) collideBetweenManagers(collidableManager *ObjectMa
 	var newState bool
 	state := false
 	for _, objectOfCollideble := range collidableManager.Objects{
+		newState = manager.collideBetweenObjects(objectOfCollideble.(Collider).GetObject())
 		if !state {
-			newState = manager.collideBetweenObjects(objectOfCollideble.(Collider).GetObject())
 			state = newState
 		}
 	}
@@ -46,8 +46,8 @@ func (manager *ObjectManager) collideBetweenObjects(object *Object) bool {
 	var newState bool
 	state := false
 	for _, objectOfManager := range manager.Objects {
+		newState = object.Collide(*objectOfManager.(*Object))
 		if !state {
-			newState = object.Collide(*objectOfManager.(*Object))
 			state = newState
 		}
 	}
