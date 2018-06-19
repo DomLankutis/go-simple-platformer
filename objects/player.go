@@ -9,7 +9,6 @@ type Player struct {
 }
 
 func (p *Player) Move(){
-	//toBeVelocity := Vector2D{0,0};d
 	if ebiten.IsKeyPressed(ebiten.KeyW) && p.CanJump{
 		p.Velocity.Y = p.ApplyVelocity(-p.JumpForce, p.Velocity.Y, p.JumpForce)
 		p.CanJump = false
