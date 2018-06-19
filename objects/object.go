@@ -70,6 +70,10 @@ func (o *Object) Display(layer *ebiten.Image) {
 	layer.DrawImage(o.Sprite, &cameraOpts)
 }
 
+func (n *Object) GetObject() *Object {
+	return n
+}
+
 func NewObject(colour color.NRGBA, posx, posy float64, sprite *ebiten.Image, world *World) *Object{
 	o := &Object{}
 	o.Sprite = sprite
