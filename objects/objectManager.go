@@ -30,38 +30,40 @@ func (manager *ObjectManager) AddObject(object interface{}) {
 	manager.Objects = append(manager.Objects, object)
 }
 
-func (manager *ObjectManager) collideBetweenManagers(collidableManager *ObjectManager) bool {
-	var newState bool
+func (manager *ObjectManager) collideBetweenManagers(collidableManager *ObjectManager) (bool, []int) {
+	var collidingObjects []int
 	state := false
-	for _, objectOfCollideble := range collidableManager.Objects{
-		newState = manager.collideBetweenObjects(objectOfCollideble.(Collider).GetObject())
+	for _, objectOfCollidable := range collidableManager.Objects{
+		newState, newCollidingObjects := manager.collideBetweenObjects(objectOfCollidable.(Collider).GetObject())
 		if !state {
 			state = newState
+			collidingObjects = append(collidingObjects, newCollidingObjects...)
 		}
 	}
-	return state
+	return state, collidingObjects
 }
 
-func (manager *ObjectManager) collideBetweenObjects(object *Object) bool {
-	var newState bool
+func (manager *ObjectManager) collideBetweenObjects(object *Object) (bool, []int) {
+	var collidingObjects []int
 	state := false
-	for _, objectOfManager := range manager.Objects {
-		newState = object.Collide(*objectOfManager.(*Object))
+	for index, objectOfManager := range manager.Objects {
+		newState := object.Collide(*objectOfManager.(Collider).GetObject())
 		if !state {
 			state = newState
+			collidingObjects = append(collidingObjects, index)
 		}
 	}
-	return state
+	return state, collidingObjects
 }
 
-func (manager *ObjectManager) Collide(o interface{}) bool {
+func (manager *ObjectManager) Collide(o interface{}) (bool, []int) {
 	switch o.(type) {
 	case *ObjectManager:
 		return manager.collideBetweenManagers(o.(*ObjectManager))
 	default:
-		return manager.collideBetweenObjects(o.(*Object))
+		return manager.collideBetweenObjects(o.(Collider).GetObject())
 	}
-	return false
+	return false, nil
 }
 
 func (manger *ObjectManager) Move() {
