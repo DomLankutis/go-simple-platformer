@@ -40,8 +40,3 @@ func (n *Npc) ApplyResistance() {
 	}
 	n.Velocity.Y += n.Gravity
 }
-
-func (n *Npc) GetObject() *Object {
-	return &n.Object
-}
-
