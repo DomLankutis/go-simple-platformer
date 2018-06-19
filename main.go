@@ -13,19 +13,24 @@ var world *objects.World
 var player objects.Player
 var collidables *objects.ObjectManager
 var collectables *objects.ObjectManager
+var enemies *objects.ObjectManager
 
 func update(screen *ebiten.Image) error {
 
 	player.Move()
-	collidables.Collide(player.GetObject())
-	collidables.Display(screen)
+	enemies.Move()
 
-	if collectables.Collide(player.GetObject()) {
+	collidables.Collide(player.GetObject())
+	if statement, _ := collectables.Collide(player.GetObject()); statement {
 		player.SetPosition(objects.Vector2D{50,50})
 	}
-	collectables.Display(screen)
 	collectables.Collide(player.GetObject())
+	collidables.Collide(enemies)
+	enemies.Collide(player.GetObject())
 
+	collidables.Display(screen)
+	collectables.Display(screen)
+	enemies.Display(screen)
 	player.Display(screen)
 
 	ebitenutil.DebugPrint(screen, fmt.Sprintf("Position: %0.f", player.GetPosition()))
@@ -42,7 +47,7 @@ func main() {
 
 	collidables = objects.NewObjectManager()
 	collectables = objects.NewObjectManager()
-
+	enemies = objects.NewObjectManager()
 
 	objImage, _ := ebiten.NewImage(640, 80, ebiten.FilterNearest)
 	objImage1, _ := ebiten.NewImage(10, 10, ebiten.FilterNearest)
@@ -52,6 +57,8 @@ func main() {
 	collidables.AddObject(objects.NewObject(color.NRGBA{0xf0, 0xff, 0xaf, 0xff}, 640 / 2 +90, 220, objImage, world))
 	collidables.AddObject(objects.NewObject(color.NRGBA{0xf0, 0xff, 0xaf, 0xff}, 0, 320, objImage, world))
 	collectables.AddObject(objects.NewObject(color.NRGBA{0xf0, 0xff, 0xaf, 0xff}, 50, 280, objImage1, world))
+
+	enemies.AddObject(objects.NewEnemy(objects.Vector2D{-200, 80}, objects.Vector2D{-200+640, 80}, playerImage, world))
 
 	player = *objects.NewPlayer(playerImage, nil, world)
 
