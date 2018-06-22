@@ -27,13 +27,13 @@ func (o *Object) GetPosition() Vector2D {
 
 func (o *Object) SetPosition(d Vector2D) {
 	currentPos := o.GetPosition()
-	d1 := d.sub(currentPos)
+	d1 := d.Sub(currentPos)
 	o.Opts.GeoM.Translate(d1.X, d1.Y)
 }
 
 func (o *Object) AppendPosition(d Vector2D) {
 	newPos := o.GetPosition()
-	newPos.add(d)
+	newPos.Add(d)
 	o.Opts.GeoM.Translate(newPos.X, newPos.Y)
 }
 
@@ -63,7 +63,7 @@ func (n *Object) ApplyVelocity(toBe, current, limit float64) float64 {
 }
 
 func (o *Object) Display(layer *ebiten.Image) {
-	o.CollisionBox.center = o.GetPosition().add(o.Size.div(Vector2D{2, 2}))
+	o.CollisionBox.center = o.GetPosition().Add(o.Size.Div(Vector2D{2, 2}))
 	o.Sprite.Fill(o.Colour)
 	cameraOpts := *o.Opts
 	cameraOpts.GeoM.Translate(-o.world.ViewportPosition.X, -o.world.ViewportPosition.Y)
@@ -83,7 +83,7 @@ func NewObject(colour color.NRGBA, posx, posy float64, sprite *ebiten.Image, wor
 	o.Opts.GeoM.Translate(posx, posy)
 	w, h := o.Sprite.Size()
 	o.Size = Vector2D{float64(w), float64(h)}
-	o.CollisionBox = newAABB(pos.add(o.Size.div(Vector2D{2, 2})), o.Size.div(Vector2D{2, 2}))
+	o.CollisionBox = newAABB(pos.Add(o.Size.Div(Vector2D{2, 2})), o.Size.Div(Vector2D{2, 2}))
 	o.world = world
 	return o
 }
