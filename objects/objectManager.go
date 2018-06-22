@@ -13,7 +13,7 @@ type Mover interface {
 }
 
 type Collider interface {
-	Collide(object Object) bool
+	Collide(object Object) (bool, Vector2D)
 	GetObject() *Object
 }
 
@@ -30,40 +30,44 @@ func (manager *ObjectManager) AddObject(object interface{}) {
 	manager.Objects = append(manager.Objects, object)
 }
 
-func (manager *ObjectManager) collideBetweenManagers(collidableManager *ObjectManager) (bool, []int) {
+func (manager *ObjectManager) collideBetweenManagers(collidableManager *ObjectManager) (bool, []Vector2D, []int) {
 	var collidingObjects []int
+	var penetrationVectors []Vector2D
 	state := false
 	for _, objectOfCollidable := range collidableManager.Objects{
-		newState, newCollidingObjects := manager.collideBetweenObjects(objectOfCollidable.(Collider).GetObject())
+		newState, newpenetrationVectors, newCollidingObjects := manager.collideBetweenObjects(objectOfCollidable.(Collider).GetObject())
 		if !state {
 			state = newState
 			collidingObjects = append(collidingObjects, newCollidingObjects...)
+			penetrationVectors = append(penetrationVectors, newpenetrationVectors...)
 		}
 	}
-	return state, collidingObjects
+	return state && penetrationVectors[0].IsZero(), penetrationVectors, collidingObjects
 }
 
-func (manager *ObjectManager) collideBetweenObjects(object *Object) (bool, []int) {
+func (manager *ObjectManager) collideBetweenObjects(object *Object) (bool, []Vector2D, []int) {
 	var collidingObjects []int
+	var penetrationVectors []Vector2D
 	state := false
 	for index, objectOfManager := range manager.Objects {
-		newState := object.Collide(*objectOfManager.(Collider).GetObject())
+		newState, penetrationVector := object.Collide(*objectOfManager.(Collider).GetObject())
 		if !state {
 			state = newState
 			collidingObjects = append(collidingObjects, index)
+			penetrationVectors = append(penetrationVectors, penetrationVector)
 		}
 	}
-	return state, collidingObjects
+	return state && !penetrationVectors[0].IsZero(), penetrationVectors, collidingObjects
 }
 
-func (manager *ObjectManager) Collide(o interface{}) (bool, []int) {
+func (manager *ObjectManager) Collide(o interface{}) (bool, []Vector2D, []int) {
 	switch o.(type) {
 	case *ObjectManager:
 		return manager.collideBetweenManagers(o.(*ObjectManager))
 	default:
 		return manager.collideBetweenObjects(o.(Collider).GetObject())
 	}
-	return false, nil
+	return false, nil, nil
 }
 
 func (manger *ObjectManager) Move() {
