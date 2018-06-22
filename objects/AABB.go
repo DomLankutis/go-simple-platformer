@@ -15,15 +15,15 @@ type AABB struct {
 }
 
 func (a AABB) GetMin() Vector2D{
-	return a.center.sub(a.extents)
+	return a.center.Sub(a.extents)
 }
 
 func (a AABB) GetMax() Vector2D{
-	return a.center.add(a.extents)
+	return a.center.Add(a.extents)
 }
 
 func (a AABB) GetSize() Vector2D{
-	return a.extents.mul(Vector2D{2, 2 })
+	return a.extents.Mul(Vector2D{2, 2 })
 }
 
 func newAABB(center, extents Vector2D, physics ...Vector2D) *AABB {
@@ -46,10 +46,10 @@ func (a *AABB) Draw(layer *ebiten.Image) {
 }
 
 func (a *AABB) minkowskiDifference(obj *AABB) *AABB {
-	topLeft := a.GetMin().sub(obj.GetMax())
-	fullSize := a.GetSize().add(obj.GetSize())
+	topLeft := a.GetMin().Sub(obj.GetMax())
+	fullSize := a.GetSize().Add(obj.GetSize())
 
-	return newAABB(topLeft.add(fullSize.div(Vector2D{2, 2})), fullSize.div(Vector2D{2, 2}))
+	return newAABB(topLeft.Add(fullSize.Div(Vector2D{2, 2})), fullSize.Div(Vector2D{2, 2}))
 }
 
 func (a *AABB) closestPointOnBoundsToPoint(point Vector2D) Vector2D{
@@ -78,10 +78,10 @@ func (a *AABB) closestPointOnBoundsToPoint(point Vector2D) Vector2D{
 }
 
 func (a *AABB) getRayIntersectionFractionOfFirstRay(originA, endA, originB, endB Vector2D) float64 {
-	r := endA.sub(originA)
-	s := endB.sub(originB)
+	r := endA.Sub(originA)
+	s := endB.Sub(originB)
 
-	numerator := (originB.sub(originA)).mulToFloat(r)
+	numerator := (originB.Sub(originA)).mulToFloat(r)
 	denominator := r.mulToFloat(s)
 
 	if numerator == 0 && denominator == 0 {
@@ -92,7 +92,7 @@ func (a *AABB) getRayIntersectionFractionOfFirstRay(originA, endA, originB, endB
 	}
 
 	u := numerator / denominator
-	t := ((originB.sub(originA)).mulToFloat(s)) / denominator
+	t := ((originB.Sub(originA)).mulToFloat(s)) / denominator
 
 	if t >= 0 && t <= 1 && u >= 0 && u <= 1 {
 		return t
@@ -101,7 +101,7 @@ func (a *AABB) getRayIntersectionFractionOfFirstRay(originA, endA, originB, endB
 }
 
 func (a *AABB) getRayIntersectionFraction(origin, direction Vector2D) float64 {
-	end := origin.add(direction)
+	end := origin.Add(direction)
 
 	min := a.GetMin()
 	max := a.GetMax()
@@ -127,7 +127,7 @@ func (o *Object) IsOverlapping(obj Object) (bool, *AABB){
 	return diff.GetMin().X <= 0 && diff.GetMax().X >= 0 && diff.GetMin().Y <= 0 && diff.GetMax().Y >= 0, diff
 }
 
-func (o *Object) Collide(obj Object) bool {
+func (o *Object) Collide(obj Object) (bool, Vector2D){
 
 	overlapping, diff := o.IsOverlapping(obj)
 
@@ -136,41 +136,40 @@ func (o *Object) Collide(obj Object) bool {
 
 		o.ApplyDirectVelocity(penetrationVector)
 
-		if !penetrationVector.isZero() {
-			tangent := (penetrationVector.getNormalised()).getTangent()
+		if !penetrationVector.IsZero() {
+			tangent := (penetrationVector.GetNormalised()).GetTangent()
 
 			oDotProduct := o.Velocity.dotProduct(tangent)
 			objDotProduct := obj.Velocity.dotProduct(tangent)
 
-			o.Velocity = Vector2D{oDotProduct, oDotProduct}.mul(tangent)
-			obj.Velocity = Vector2D{objDotProduct, objDotProduct}.mul(tangent)
+			o.Velocity = Vector2D{oDotProduct, oDotProduct}.Mul(tangent)
+			obj.Velocity = Vector2D{objDotProduct, objDotProduct}.Mul(tangent)
 
 			if penetrationVector.Y < 0 || penetrationVector.X != 0 {
 				o.CanJump = true
 			}
-			return true
+			return true, penetrationVector
 		}
 	}else {
-		relativeMotion := o.Velocity.sub(obj.Velocity)
+		relativeMotion := o.Velocity.Sub(obj.Velocity)
 		h := diff.getRayIntersectionFraction(Vector2D{0, 0}, relativeMotion)
 
 		if h < math.Inf(1) {
 
-			o.ApplyDirectVelocity(o.Velocity.mul(Vector2D{h,h}))
-			obj.ApplyDirectVelocity(obj.Velocity.mul(Vector2D{h,h}))
+			o.ApplyDirectVelocity(o.Velocity.Mul(Vector2D{h,h}))
+			obj.ApplyDirectVelocity(obj.Velocity.Mul(Vector2D{h,h}))
 
 
-			tangent := (relativeMotion.getNormalised()).getTangent()
+			tangent := (relativeMotion.GetNormalised()).GetTangent()
 
 			oDotProduct := o.Velocity.dotProduct(tangent)
 			objDotProduct := obj.Velocity.dotProduct(tangent)
 
-			o.ApplyDirectVelocity(Vector2D{oDotProduct, oDotProduct}.mul(tangent))
-			obj.ApplyDirectVelocity(Vector2D{objDotProduct, objDotProduct}.mul(tangent))
-			o.CanJump = true
+			o.ApplyDirectVelocity(Vector2D{oDotProduct, oDotProduct}.Mul(tangent))
+			obj.ApplyDirectVelocity(Vector2D{objDotProduct, objDotProduct}.Mul(tangent))
 
-			return true
+			return true, Vector2D{}
 		}
 	}
-	return false
+	return false, Vector2D{}
 }
