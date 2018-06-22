@@ -20,11 +20,10 @@ func update(screen *ebiten.Image) error {
 	player.Move()
 	enemies.Move()
 
-	collidables.Collide(player.GetObject())
-	if statement, _ := collectables.Collide(player.GetObject()); statement {
+	if statement, _, _:= collectables.Collide(player.GetObject()); statement {
 		player.SetPosition(objects.Vector2D{50,50})
 	}
-	collectables.Collide(player.GetObject())
+	collidables.Collide(player.GetObject())
 	collidables.Collide(enemies)
 	enemies.Collide(player.GetObject())
 
