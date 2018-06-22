@@ -21,7 +21,7 @@ func (n *Npc) init() {
 	n.Opts.GeoM.Translate(10, 10)
 	w, h := n.Sprite.Size()
 	n.Size = Vector2D{float64(w), float64(h)}
-	n.CollisionBox = newAABB(Vector2D{0,0}, n.Size.div(Vector2D{2, 2}))
+	n.CollisionBox = newAABB(Vector2D{0,0}, n.Size.Div(Vector2D{2, 2}))
 }
 
 func (n *Npc) ApplyResistance() {
