@@ -2,6 +2,7 @@ package objects
 
 import (
 	"github.com/hajimehoshi/ebiten"
+	"image/color"
 )
 
 type Enemy struct {
@@ -16,12 +17,13 @@ func NewEnemy(pathStart, pathEnd Vector2D, sprite *ebiten.Image, world *World) *
 	e := Enemy{PathStart: pathStart, PathEnd: pathEnd}
 	e.Sprite = sprite
 	e.world = world
-	startpos := pathEnd.add(pathStart).div(Vector2D{2, 2})
+	startpos := pathEnd.Add(pathStart).Div(Vector2D{2, 2})
 	e.Npc.init()
 	e.SetPosition(startpos)
 	e.Direction = 1
 	e.Speed = 2
 	e.MaxVelocity = 3
+	e.Colour = color.NRGBA{0xff, 0x01, 0x0a, 0xff}
 
 	return &e
 }
